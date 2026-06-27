@@ -13,7 +13,7 @@ A 7-agent AI system with a CLI, FastAPI backend, and Next.js dashboard. Agents f
 └───────────────────────────┬─────────────────────────────────────┘
                             │ REST + SSE
 ┌───────────────────────────▼─────────────────────────────────────┐
-│                    FastAPI Backend :8000                          │
+│                    FastAPI Backend :8001                          │
 │  /api/agents/{hunt,analyze,score,tailor,cover-letter,interview}  │
 │  /api/events/{task_id}  ·  /api/jobs  ·  /api/applications      │
 └──────────┬──────────────────────────────────────────────────────┘
@@ -176,7 +176,7 @@ python3 main.py
 ```bash
 # Terminal 1 — backend
 cd job-hunter
-uvicorn backend.main:app --reload --port 8000
+python3 -m uvicorn backend.main:app --reload --port 8001
 
 # Terminal 2 — frontend
 cd job-hunter/frontend
@@ -186,8 +186,8 @@ npm run dev
 | Service | URL |
 |---------|-----|
 | Dashboard | http://localhost:3000 |
-| API docs (Swagger) | http://localhost:8000/docs |
-| Health check | http://localhost:8000/health |
+| API docs (Swagger) | http://localhost:8001/docs |
+| Health check | http://localhost:8001/health |
 
 ### Option C — With PostgreSQL + distributed tracing (Jaeger)
 
@@ -228,7 +228,7 @@ POST /api/agents/interview/{job_id}
 **Example — trigger Job Hunter:**
 
 ```bash
-curl -X POST http://localhost:8000/api/agents/hunt \
+curl -X POST http://localhost:8001/api/agents/hunt \
   -H "Content-Type: application/json" \
   -d '{"roles": ["Data Engineer"], "keywords": ["Python", "Airflow"], "location": "Remote", "experience_level": "mid"}'
 ```
@@ -248,7 +248,7 @@ GET /api/events/{task_id}
 ```
 
 ```bash
-curl -N http://localhost:8000/api/events/3f2a1b4c-...
+curl -N http://localhost:8001/api/events/3f2a1b4c-...
 ```
 
 ```
@@ -340,7 +340,10 @@ The Anthropic API requires separate billing from Claude Pro. Add credits at [con
 RemoteOK's free API has limited tag filtering. Try single-word role names like `"Python"` or `"Engineer"`.
 
 **SSE stream hangs**
-Make sure the backend is running on `:8000` and `next.config.js` proxies `/api/*` correctly.
+Make sure the backend is running on `:8001` and `next.config.js` proxies `/api/*` correctly.
+
+**Port 8001 already in use**
+Another process is on that port. Kill it with `lsof -ti:8001 | xargs kill` or change the port in `next.config.js` and the uvicorn command to match.
 
 ---
 

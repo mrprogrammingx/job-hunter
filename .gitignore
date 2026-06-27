@@ -24,6 +24,10 @@ outputs/
 # macOS
 .DS_Store
 
+# Frontend build output and dependencies
+frontend/.next/
+frontend/node_modules/
+
 # IDE
 .vscode/
 .idea/
