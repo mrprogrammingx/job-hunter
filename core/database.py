@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import Optional, List
 from core.models import Job, CandidateProfile, MatchResult, Application, ApplicationMaterials
 
-DB_PATH = Path.home() / ".job-hunter" / "jobs.db"
+DB_PATH = Path(__file__).resolve().parent.parent / "data" / "jobs.db"
 
 
 def get_connection() -> sqlite3.Connection:
