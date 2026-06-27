@@ -30,7 +30,13 @@ export default function SignupPage() {
       });
       if (!res.ok) {
         const data = await res.json();
-        setError(data.detail ?? "Signup failed.");
+        // FastAPI 422 returns detail as an array of validation error objects
+        const detail = data.detail;
+        setError(
+          Array.isArray(detail)
+            ? detail.map((e: { msg: string }) => e.msg).join(". ")
+            : (typeof detail === "string" ? detail : "Signup failed.")
+        );
         setLoading(false);
         return;
       }
