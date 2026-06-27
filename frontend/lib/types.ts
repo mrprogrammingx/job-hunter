@@ -1,3 +1,9 @@
+export interface User {
+  id: number;
+  email: string;
+  name: string;
+}
+
 export type TaskStatus = "queued" | "running" | "done" | "failed";
 export type AppStatus = "discovered" | "applied" | "interview" | "offer" | "accepted" | "rejected";
 

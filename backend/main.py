@@ -21,6 +21,7 @@ from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
 from backend.config import settings
 from backend.db.session import init_async_db
 from backend.telemetry.otel import setup_telemetry
+from backend.api.auth import router as auth_router
 from backend.api.agents import router as agents_router
 from backend.api.events import router as events_router
 from backend.api.jobs import router as jobs_router
@@ -54,6 +55,7 @@ app.add_middleware(
 
 FastAPIInstrumentor.instrument_app(app)
 
+app.include_router(auth_router)
 app.include_router(agents_router)
 app.include_router(events_router)
 app.include_router(jobs_router)

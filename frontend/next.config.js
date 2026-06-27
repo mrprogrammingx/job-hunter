@@ -2,7 +2,11 @@
 const nextConfig = {
   async rewrites() {
     return [
-      { source: "/api/:path*", destination: "http://localhost:8001/api/:path*" },
+      // /api/auth/* is handled by the NextAuth App Router catch-all — don't proxy it
+      {
+        source: "/api/:path((?!auth/).*)",
+        destination: "http://localhost:8001/api/:path*",
+      },
     ];
   },
 };
