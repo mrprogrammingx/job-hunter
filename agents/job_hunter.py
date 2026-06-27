@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 from rich.console import Console
 from rich.progress import track
 
@@ -18,7 +18,7 @@ class JobHunterAgent(BaseAgent):
         super().__init__(band, "JobHunter")
         band.subscribe("search.start", self._handle_search)
 
-    def hunt(self, roles: List[str], keywords: List[str], location: str, experience_level: str) -> List[Job]:
+    def hunt(self, roles: List[str], keywords: List[str], location: str, experience_level: str, user_id: Optional[int] = None) -> List[Job]:
         console.print(f"\n[bold cyan]🔍 Job Hunter[/bold cyan] searching for: {', '.join(roles)}")
 
         with console.status("[cyan]Fetching jobs from RemoteOK...[/cyan]"):
@@ -34,11 +34,9 @@ class JobHunterAgent(BaseAgent):
 
         saved_ids = []
         for job in ranked:
-            jid = db.save_job(job)
+            jid = db.save_job(job, user_id=user_id)
             job.id = jid
-            db.upsert_application(
-                _make_app(job.id)
-            )
+            db.upsert_application(_make_app(job.id), user_id=user_id)
             saved_ids.append(jid)
 
         console.print(f"[green]✓ Stored {len(ranked)} jobs[/green]")

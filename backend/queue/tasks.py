@@ -63,7 +63,7 @@ def _safe_serialize(obj: Any) -> Any:
 # Task handlers — one per agent
 # ---------------------------------------------------------------------------
 
-def run_hunt(task_id: str, roles: list, keywords: list, location: str, experience_level: str):
+def run_hunt(task_id: str, roles: list, keywords: list, location: str, experience_level: str, user_id: int | None = None):
     with tracer.start_as_current_span("agent.job_hunter") as span:
         span.set_attribute("task.id", task_id)
         span.set_attribute("search.roles", str(roles))
@@ -75,6 +75,7 @@ def run_hunt(task_id: str, roles: list, keywords: list, location: str, experienc
             jobs = JobHunterAgent(band).hunt(
                 roles=roles, keywords=keywords,
                 location=location, experience_level=experience_level,
+                user_id=user_id,
             )
             span.set_attribute("jobs.found", len(jobs))
             task_manager.finish(task_id, result=[j.to_dict() for j in jobs])

@@ -25,6 +25,7 @@ class TaskState:
     message: str = ""
     result: Optional[Any] = None
     error: Optional[str] = None
+    user_id: Optional[int] = None
     created_at: str = field(default_factory=lambda: datetime.utcnow().isoformat())
     # Thread-safe queue consumed by the SSE generator
     event_queue: sync_queue.Queue = field(default_factory=sync_queue.Queue)
@@ -38,6 +39,7 @@ class TaskState:
             "message": self.message,
             "result": self.result,
             "error": self.error,
+            "user_id": self.user_id,
             "created_at": self.created_at,
         }
 
@@ -46,8 +48,8 @@ class TaskManager:
     def __init__(self):
         self._tasks: Dict[str, TaskState] = {}
 
-    def create(self, agent: str) -> TaskState:
-        task = TaskState(id=str(uuid4()), agent=agent)
+    def create(self, agent: str, user_id: Optional[int] = None) -> TaskState:
+        task = TaskState(id=str(uuid4()), agent=agent, user_id=user_id)
         self._tasks[task.id] = task
         return task
 

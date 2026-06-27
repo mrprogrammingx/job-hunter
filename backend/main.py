@@ -21,6 +21,7 @@ from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
 from backend.config import settings
 from backend.db.session import init_async_db
 from backend.telemetry.otel import setup_telemetry
+from core.database import init_db as init_sqlite_db
 from backend.api.auth import router as auth_router
 from backend.api.agents import router as agents_router
 from backend.api.events import router as events_router
@@ -34,7 +35,8 @@ os.environ.setdefault("ANTHROPIC_API_KEY", settings.anthropic_api_key)
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     setup_telemetry(otel_enabled=settings.otel_enabled, endpoint=settings.otel_endpoint)
-    await init_async_db()
+    init_sqlite_db()      # creates/migrates jobs, applications, profiles tables
+    await init_async_db() # creates users, agent_tasks tables
     yield
 
 
